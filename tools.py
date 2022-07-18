@@ -183,7 +183,8 @@ def get_args():
     if args.continuous:
         args.id = 'PctContinuous-v0'
     else:
-        args.id = 'PctDiscrete-v0'
+        #args.id = 'PctDiscrete-v0'
+        args.id = 'bpp0-v0'
 
     if args.setting == 1:
         args.internal_node_length = 6
@@ -237,4 +238,8 @@ def registration_envs():
     register(
         id='PctContinuous-v0',
         entry_point='pct_envs.PctContinuous0:PackingContinuous',
+    )
+    register(
+        id='bpp0-v0',
+        entry_point='pct_envs.bpp0:PackingGame',
     )
