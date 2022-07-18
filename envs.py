@@ -91,6 +91,13 @@ def make_vec_envs(args,
             If you don't specify observation_space, we'll have to create a dummy
             environment to get it.
         """
+        box_range = (2, 2, 2, 5, 5, 5) # the item size range (x_min, y_min, z_min, x_max, y_max, z_max)
+        box_size_set = [] 
+        for i in range(box_range[0],box_range[3]+1):
+            for j in range(box_range[1],box_range[4]+1):
+                for k in range(box_range[2],box_range[5]+1):
+                    box_size_set.append((i, j, k))
+
         env = gym.make(env_name,
                        setting = args.setting,
                        item_set = args.item_size_set,
@@ -101,11 +108,13 @@ def make_vec_envs(args,
                        shuffle=args.shuffle,
                        sample_from_distribution=args.sample_from_distribution,
                        sample_left_bound=args.sample_left_bound,
-                       sample_right_bound=args.sample_right_bound
+                       sample_right_bound=args.sample_right_bound,
+
+                       box_set=box_size_set
                        )
 
         spaces = [env.observation_space, env.action_space]
-        envs = ShmemVecEnv(envs, spaces, context='fork')
+        envs = ShmemVecEnv(envs, spaces, context='spawn')
 
     else:
         envs = DummyVecEnv(envs)

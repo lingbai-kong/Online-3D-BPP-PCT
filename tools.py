@@ -59,7 +59,6 @@ def backup(timeStr, args, upper_policy = None):
 
     gymPath = './pct_envs'
     envName = args.id.split('-v')
-    print(envName)
     envName = envName[0] + envName[1]
     
     envPath = os.path.join(gymPath, envName)
