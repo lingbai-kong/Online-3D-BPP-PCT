@@ -59,7 +59,9 @@ def backup(timeStr, args, upper_policy = None):
 
     gymPath = './pct_envs'
     envName = args.id.split('-v')
+    print(envName)
     envName = envName[0] + envName[1]
+    
     envPath = os.path.join(gymPath, envName)
     copytree(envPath, os.path.join(targetDir, envName))
 
@@ -184,7 +186,7 @@ def get_args():
         args.id = 'PctContinuous-v0'
     else:
         #args.id = 'PctDiscrete-v0'
-        args.id = 'bpp0-v0'
+        args.id = 'bpp-v0'
 
     if args.setting == 1:
         args.internal_node_length = 6
@@ -240,6 +242,6 @@ def registration_envs():
         entry_point='pct_envs.PctContinuous0:PackingContinuous',
     )
     register(
-        id='bpp0-v0',
+        id='bpp-v0',
         entry_point='pct_envs.bpp0:PackingGame',
     )
