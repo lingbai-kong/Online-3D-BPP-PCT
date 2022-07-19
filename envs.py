@@ -24,12 +24,13 @@ try:
 except ImportError:
     pass
 
-def make_env(env_id, seed, rank, log_dir, allow_early_resets, args):
+def make_env(env_id, seed, rank, log_dir, allow_early_resets, args, box_size_set=None):
     def _thunk():
         if env_id.startswith("dm"):
             _, domain, task = env_id.split('.')
             env = dm_control2gym.make(domain_name=domain, task_name=task)
         else:
+
             env = gym.make(
                            env_id,
                            setting = args.setting,
@@ -43,7 +44,9 @@ def make_env(env_id, seed, rank, log_dir, allow_early_resets, args):
                            shuffle = args.shuffle,
                            sample_from_distribution = args.sample_from_distribution,
                            sample_left_bound = args.sample_left_bound,
-                           sample_right_bound = args.sample_right_bound
+                           sample_right_bound = args.sample_right_bound,
+                
+                           box_set=box_size_set
                            )
 
         env.seed(seed + rank)
@@ -81,8 +84,15 @@ def make_vec_envs(args,
     num_processes = args.num_processes
     device = args.device
 
+    box_range = (2, 2, 2, 5, 5, 5) # the item size range (x_min, y_min, z_min, x_max, y_max, z_max)
+    box_size_set = [] 
+    for i in range(box_range[0],box_range[3]+1):
+        for j in range(box_range[1],box_range[4]+1):
+            for k in range(box_range[2],box_range[5]+1):
+                box_size_set.append((i, j, k))
+    
     envs = [
-        make_env(env_name, seed, i, log_dir, allow_early_resets, args)
+        make_env(env_name, seed, i, log_dir, allow_early_resets, args, box_size_set)
         for i in range(num_processes)
     ]
 
@@ -91,12 +101,6 @@ def make_vec_envs(args,
             If you don't specify observation_space, we'll have to create a dummy
             environment to get it.
         """
-        box_range = (2, 2, 2, 5, 5, 5) # the item size range (x_min, y_min, z_min, x_max, y_max, z_max)
-        box_size_set = [] 
-        for i in range(box_range[0],box_range[3]+1):
-            for j in range(box_range[1],box_range[4]+1):
-                for k in range(box_range[2],box_range[5]+1):
-                    box_size_set.append((i, j, k))
 
         env = gym.make(env_name,
                        setting = args.setting,
@@ -114,7 +118,7 @@ def make_vec_envs(args,
                        )
 
         spaces = [env.observation_space, env.action_space]
-        envs = ShmemVecEnv(envs, spaces, context='spawn')
+        envs = ShmemVecEnv(envs, spaces, context='fork')
 
     else:
         envs = DummyVecEnv(envs)

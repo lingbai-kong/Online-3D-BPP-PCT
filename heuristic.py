@@ -2,6 +2,7 @@ import givenData
 import numpy as np
 from pct_envs.PctDiscrete0 import PackingDiscrete
 from pct_envs.PctContinuous0 import PackingContinuous
+from pct_envs.bpp0 import PackingGame
 from tools import get_args_heuristic
 
 '''
@@ -580,15 +581,25 @@ if __name__ == '__main__':
     args = get_args_heuristic()
 
     if args.continuous == True: PackingEnv = PackingContinuous
-    else: PackingEnv = PackingDiscrete
-
+    else: 
+        #PackingEnv = PackingDiscrete
+        PackingEnv = PackingGame
+        
+    box_range = (2, 2, 2, 5, 5, 5) # the item size range (x_min, y_min, z_min, x_max, y_max, z_max)
+    box_size_set = [] 
+    for i in range(box_range[0],box_range[3]+1):
+        for j in range(box_range[1],box_range[4]+1):
+            for k in range(box_range[2],box_range[5]+1):
+                box_size_set.append((i, j, k))
+                
     env = PackingEnv(setting = args.setting,
                      container_size = args.container_size,
                      item_set = args.item_size_set,
                      data_name = args.dataset_path,
                      load_test_data = args.load_dataset,
                      internal_node_holder = 80,
-                     leaf_node_holder = 1000)
+                     leaf_node_holder = 1000,
+                     box_set=box_size_set)
 
     if args.heuristic == 'LSAH':
         mean, var, length = LASH(env, args.evaluation_episodes)
