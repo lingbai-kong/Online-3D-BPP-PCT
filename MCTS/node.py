@@ -117,12 +117,24 @@ class PutNode(Node):
         # get valid position
         action_mask = sim_env.get_possible_position()
         action_mask = np.reshape(action_mask, newshape=(-1,))
-        print('action_mask.shape',action_mask)
-        print('observation.shape',observation.shape)
-        exit(0)
+
         # get possibilities using neural network
-        value, selectedlogProb, selectedIdx,selected_leaf_node = nmodel.evaluate(observation, False)
-        self.next_nodes[tuple(selected_leaf_node)] = PutNode(self, selectedlogProb)
+        value, selectedlogProb, selectedIdx,leaf_nodes = nmodel.evaluate(observation, False)
+        
+        valid_action_num = 0
+        for i in range(len(leaf_nodes)):
+            if np.sum(leaf_nodes[i].cpu().numpy())!=0:
+                valid_action_num+=1
+        
+        for i in range(len(leaf_nodes)):
+            if np.sum(leaf_nodes[i].cpu().numpy())!=0:
+                action = leaf_nodes[i].cpu().numpy()[0:6]
+                if i == selectedIdx:
+                    action_possibility = credit + (1-credit) * (1/valid_action_num)
+                    self.next_nodes[tuple(action)] = PutNode(self, action_possibility)
+                else:
+                    action_possibility = (1-credit) * (1/valid_action_num)
+                    self.next_nodes[tuple(action)] = PutNode(self, action_possibility)
         
 #         valid_action_num = np.sum(action_mask)
         
@@ -134,7 +146,7 @@ class PutNode(Node):
 
         # no give-up action, default action is '0'
         if len(self.next_nodes) == 0:
-            self.next_nodes[0] = PutNode(self, 1)
+            self.next_nodes[(0,0,0,0,0,0)] = PutNode(self, 1)
 
         if rollout_length >= 1 and len(box_size_list) >= rollout_length + 1:
             value = self.roll_out(box_size_list[:rollout_length+1], copy.deepcopy(sim_env), observation)
@@ -160,9 +172,10 @@ class PutNode(Node):
             # action_max = max(action_pos, key=action_pos.get)
             # obs, reward, done, _ = sim3_env.step([action_max])
             
-            value, selectedlogProb, selectedIdx,selected_leaf_node = nmodel.evaluate(obs, False)
-            action_sample = selected_leaf_node
+             # get possibilities using neural network
+            value, selectedlogProb, selectedIdx, leaf_nodes = nmodel.evaluate(observation, False)
             
+            action_sample = leaf_nodes[selectedIdx].cpu().numpy()[0:6]
             #action_sample = np.random.choice(prev.shape[0], p=prev)
             obs, reward, done, _ = sim3_env.step(action_sample)
 

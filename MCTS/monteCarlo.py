@@ -115,8 +115,9 @@ class MCTree(object):
             return max_action
         poss = [pos for _, pos in policy.items()]
         actions = [key for key in policy.keys()]
-        #action = np.random.choice(actions, p=poss)
-        return actions[0]
+        ids=[i for i in range(len(actions))]
+        action_id = np.random.choice(ids, p=poss)
+        return actions[action_id]
 
     def succeed(self, put_action, new_box_size, observation):
         put_action = put_action
