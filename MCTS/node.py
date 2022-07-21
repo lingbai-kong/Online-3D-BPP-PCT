@@ -117,17 +117,20 @@ class PutNode(Node):
         # get valid position
         action_mask = sim_env.get_possible_position()
         action_mask = np.reshape(action_mask, newshape=(-1,))
-        
+        print('action_mask.shape',action_mask)
+        print('observation.shape',observation.shape)
+        exit(0)
         # get possibilities using neural network
-        value, pvec = nmodel.evaluate(observation, False)
-
-        valid_action_num = np.sum(action_mask)
+        value, selectedlogProb, selectedIdx,selected_leaf_node = nmodel.evaluate(observation, False)
+        self.next_nodes[tuple(selected_leaf_node)] = PutNode(self, selectedlogProb)
         
-        for i in range(len(action_mask)):
-            action = i
-            if action_mask[i] == 1: # !!! still use mask !!!
-                action_possibility = credit * pvec[action] + (1-credit) * (1/valid_action_num)
-                self.next_nodes[action] = PutNode(self, action_possibility)
+#         valid_action_num = np.sum(action_mask)
+        
+#         for i in range(len(action_mask)):
+#             action = i
+#             if action_mask[i] == 1: # !!! still use mask !!!
+#                 action_possibility = credit * pvec[action] + (1-credit) * (1/valid_action_num)
+#                 self.next_nodes[action] = PutNode(self, action_possibility)
 
         # no give-up action, default action is '0'
         if len(self.next_nodes) == 0:
@@ -151,14 +154,17 @@ class PutNode(Node):
         value = None
         for i in range(box_num):
             # box_size = box_size_list[i]
-            value, prev = nmodel.evaluate(obs, False)
+            # value, prev = nmodel.evaluate(obs, False)
 
             # action_pos = dict(zip(range(prev.shape[0]), prev))
             # action_max = max(action_pos, key=action_pos.get)
             # obs, reward, done, _ = sim3_env.step([action_max])
-
-            action_sample = np.random.choice(prev.shape[0], p=prev)
-            obs, reward, done, _ = sim3_env.step([action_sample])
+            
+            value, selectedlogProb, selectedIdx,selected_leaf_node = nmodel.evaluate(obs, False)
+            action_sample = selected_leaf_node
+            
+            #action_sample = np.random.choice(prev.shape[0], p=prev)
+            obs, reward, done, _ = sim3_env.step(action_sample)
 
             if not done and i+1 < box_num:
                 reward_stack.append(reward)

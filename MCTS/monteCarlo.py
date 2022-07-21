@@ -62,7 +62,7 @@ class MCTree(object):
             cur_action, next_node = cur_node.choose_best(self.c)
             # Simulate time: take the action
             action_idx = cur_action
-            obs, reward, done, _ = sim2_env.step([action_idx])
+            obs, reward, done, _ = sim2_env.step(action_idx)
             next_node.reward = reward
             if done:
                 self.subrt += 1
@@ -115,11 +115,11 @@ class MCTree(object):
             return max_action
         poss = [pos for _, pos in policy.items()]
         actions = [key for key in policy.keys()]
-        action = np.random.choice(actions, p=poss)
-        return action
+        #action = np.random.choice(actions, p=poss)
+        return actions[0]
 
     def succeed(self, put_action, new_box_size, observation):
-        put_action = int(put_action)
+        put_action = put_action
         self.known_size_seq.pop(0)
         self.known_size_seq.append(new_box_size)
         new_node = self.root.next_nodes.get(put_action)

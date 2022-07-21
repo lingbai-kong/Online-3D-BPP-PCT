@@ -5,8 +5,8 @@ import numpy as np
 import time
 
 import sys 
-sys.path.append("..")
-import config
+sys.path.append("..") 
+from tools import get_args, registration_envs
 
 
 def test(box_size_list, env, obser, simulation_times, search_depth, rollout_length):
@@ -28,7 +28,7 @@ def test(box_size_list, env, obser, simulation_times, search_depth, rollout_leng
         action = mctree.sample_action(pl)
         
         assert sim_env.next_box == box_size_list[0]
-        obser, r, done, dt = sim_env.step([action])
+        obser, r, done, dt = sim_env.step(action)
         sum_reward += r
         if done:
             dt['reward'] = sum_reward
@@ -86,22 +86,37 @@ def compare_test(env, args_list, times=5):
 
 
 if __name__ == '__main__':
-    env = gym.make(config.env_name, _adjust_ratio=0, adjust=False, box_set=config.box_size_set,
-                   container_size=config.container_size, test=True,
-                   data_name="../dataset/cut_2.pt", data_type=config.data_type)
+    registration_envs()
+    args = get_args()
+    env = gym.make(args.id,
+                   setting = args.setting,
+                   item_set = args.item_size_set,
+                   container_size=args.container_size,
+                   internal_node_holder = args.internal_node_holder,
+                   leaf_node_holder = args.leaf_node_holder,
+                   LNES = args.lnes,
+                   shuffle=args.shuffle,
+                   sample_from_distribution=args.sample_from_distribution,
+                   sample_left_bound=args.sample_left_bound,
+                   sample_right_bound=args.sample_right_bound
+                   )
+#     env = gym.make(config.env_name, _adjust_ratio=0, adjust=False, box_set=config.box_size_set,
+#                    container_size=config.container_size, test=True,
+#                    data_name="../dataset/cut_2.pt", data_type=config.data_type)
+    
     args_list = list()
     # args_list.append([1,0,0])
     # args_list.append([400, 1, -1])
     # args_list.append([400, None, -1])
     args_list.append([100, None, -1])
     result = compare_test(env, args_list, 100)
-    for (key, value) in result.items():
-        print(value[:, 0])
-        print(value[:, 1])
-        meanv = value.mean(axis=-2)
-        print(meanv)
-        print("avg_time_per_item", meanv[-1]/meanv[1])
-        # print(value.var(axis=-2))
+#     for (key, value) in result.items():
+#         print(value[:, 0])
+#         print(value[:, 1])
+#         meanv = value.mean(axis=-2)
+#         print(meanv)
+#         print("avg_time_per_item", meanv[-1]/meanv[1])
+#         # print(value.var(axis=-2))
 
 
 

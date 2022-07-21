@@ -1,5 +1,9 @@
 import sys 
 sys.path.append("..")
-from acktr.model_loader import nnModel
-import config
-nmodel = nnModel('../pretrained_models/default_cut_2.pt', config)
+from tools import get_args
+from model_loader import nnModel
+
+args = get_args()
+
+nmodel = nnModel('../pretrained_models/PCT_setting1.pt', args)
+print('Pre-train model loaded!', '../pretrained_models/PCT_setting1.pt')
