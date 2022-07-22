@@ -91,7 +91,6 @@ class PutNode(Node):
         self.q = 0
 
     def expand(self, **kwargs):
-
         credit = kwargs.get('credit')
         rollout_length = kwargs.get('rollout_length')
         box_size_list = kwargs.get('box_size_list')
@@ -126,6 +125,7 @@ class PutNode(Node):
             if np.sum(leaf_nodes[i].cpu().numpy())!=0:
                 valid_action_num+=1
         
+        
         for i in range(len(leaf_nodes)):
             if np.sum(leaf_nodes[i].cpu().numpy())!=0:
                 action = leaf_nodes[i].cpu().numpy()[0:6]
@@ -135,7 +135,6 @@ class PutNode(Node):
                 else:
                     action_possibility = (1-credit) * (1/valid_action_num)
                     self.next_nodes[tuple(action)] = PutNode(self, action_possibility)
-        
 #         valid_action_num = np.sum(action_mask)
         
 #         for i in range(len(action_mask)):
@@ -174,7 +173,6 @@ class PutNode(Node):
             
              # get possibilities using neural network
             value, selectedlogProb, selectedIdx, leaf_nodes = nmodel.evaluate(observation, False)
-            
             action_sample = leaf_nodes[selectedIdx].cpu().numpy()[0:6]
             #action_sample = np.random.choice(prev.shape[0], p=prev)
             obs, reward, done, _ = sim3_env.step(action_sample)

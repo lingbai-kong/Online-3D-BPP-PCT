@@ -74,7 +74,7 @@ def compare_test(env, args_list, times=5):
             if j not in result:
                 result[j] = []
             arg = args_list[j]
-            print(arg)
+            # print(arg)
             start = time.time()
             ratio, counter, reward = test(next_box_size_list[:4], env, obser, *arg)
             end = time.time()

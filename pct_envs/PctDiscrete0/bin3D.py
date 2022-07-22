@@ -141,8 +141,15 @@ class PackingDiscrete(gym.Env):
         x = int(leaf_node[3] - leaf_node[0])
         y = int(leaf_node[4] - leaf_node[1])
         z = list(self.next_box)
-        z.remove(x)
-        z.remove(y)
+        # print(x,y,z)
+        if x in z: 
+            z.remove(x)
+        else: 
+            print('err')
+        if y in z: 
+            z.remove(y)
+        else: 
+            print('err')
         z = z[0]
         action = (0, int(leaf_node[0]), int(leaf_node[1]))
         next_box = (x, y, int(z))

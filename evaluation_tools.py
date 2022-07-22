@@ -19,7 +19,20 @@ def evaluate(PCT_policy, eval_envs, timeStr, args, device, eval_freq = 100, fact
     while step_counter < eval_freq:
         with torch.no_grad():
             selectedlogProb, selectedIdx, policy_dist_entropy, value = PCT_policy(all_nodes, True, normFactor = factor)
+        action_mask = eval_envs.get_possible_position()
+        
         selected_leaf_node = leaf_nodes[batchX, selectedIdx.squeeze()]
+#         print('obs',obs)
+#         print('get_possible_position',eval_envs.get_possible_position())
+#         print('action_mask.shape',action_mask.shape)
+#         print("value",value)
+#         print('selectedlogProb',selectedlogProb)
+#         print('selectedIdx',selectedIdx)
+#         print('selected_leaf_node',selected_leaf_node)
+#         print('leaf_nodes',leaf_nodes.shape)
+#         print('batchX',batchX)
+#         print('selectedIdx.squeeze()',selectedIdx.squeeze())
+#         exit(0)
         items = eval_envs.packed
         obs, reward, done, infos = eval_envs.step(selected_leaf_node.cpu().numpy()[0][0:6])
 

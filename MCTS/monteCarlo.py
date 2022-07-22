@@ -73,7 +73,6 @@ class MCTree(object):
                 break
             cur_node = next_node
             cur_depth += 1
-
         if cur_depth > self.reached_depth:
             self.reached_depth = cur_depth
         self.backup(cur_node, value)
@@ -98,7 +97,6 @@ class MCTree(object):
     def get_policy(self, sim_times, zeta=1):
         start = time.clock()
         for i in range(sim_times):
-            # print('simulation',i+1)
             self.select()
         end = time.clock()
         p = self.play(zeta)
