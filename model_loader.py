@@ -18,9 +18,9 @@ class nnModel(object):
         self.PCT_policy =  DRL_GAT(self.args)
         self.PCT_policy =  self.PCT_policy.to(self.device)
         
-        self.PCT_policy=load_policy('../pretrained_models/PCT_setting1.pt', self.PCT_policy)
+        self.PCT_policy=load_policy(url, self.PCT_policy)
         self.PCT_policy.eval()
-        print('Pre-train model loaded!', '../pretrained_models/PCT_setting1.pt')
+        print('Pre-train model loaded!', url)
     def evaluate(self,obs,_):
         obs = torch.FloatTensor(obs).to(self.device).unsqueeze(dim=0)
         batchX = torch.arange(self.args.num_processes)

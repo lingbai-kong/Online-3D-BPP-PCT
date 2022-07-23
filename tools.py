@@ -129,6 +129,7 @@ def load_policy(load_path, upper_policy):
 
 def get_args():
     parser = argparse.ArgumentParser(description='PCT arguments')
+    parser.add_argument("-f",type=str,default="")
     parser.add_argument('--setting', type=int, default=2, help='Experiment setting, please see our paper for details')
     parser.add_argument('--lnes', type=str, default='EMS', help='Leaf Node Expansion Schemes: EMS (recommend), EV, EP, CP, FC')
     parser.add_argument('--internal-node-holder', type=int, default=80, help='Maximum number of internal nodes')
@@ -170,6 +171,8 @@ def get_args():
 
     args = parser.parse_args()
 
+    args.evaluate=True
+    
     if args.no_cuda: args.device = 'cpu'
 
     args.container_size = givenData.container_size
@@ -199,7 +202,6 @@ def get_args():
 
 def get_args_heuristic():
     parser = argparse.ArgumentParser(description='Heuristic baseline arguments')
-
     parser.add_argument('--continuous', action='store_true', help='Use continuous enviroment, otherwise the enviroment is discrete')
     parser.add_argument('--setting', type=int, default=2, help='Experiment setting, please see our paper for details')
     # parser.add_argument('--evaluate', action='store_true', help='Evaluate only')

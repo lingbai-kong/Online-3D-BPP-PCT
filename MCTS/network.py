@@ -5,5 +5,4 @@ from model_loader import nnModel
 
 args = get_args()
 
-nmodel = nnModel('../pretrained_models/PCT_setting1.pt', args)
-print('Pre-train model loaded!', '../pretrained_models/PCT_setting1.pt')
+nmodel = nnModel('pretrained_models/PCT_setting1.pt', args)

@@ -109,14 +109,14 @@ if __name__ == '__main__':
     # args_list.append([400, 1, -1])
     # args_list.append([400, None, -1])
     args_list.append([100, None, -1])
-    result = compare_test(env, args_list, 100)
-#     for (key, value) in result.items():
-#         print(value[:, 0])
-#         print(value[:, 1])
-#         meanv = value.mean(axis=-2)
-#         print(meanv)
-#         print("avg_time_per_item", meanv[-1]/meanv[1])
-#         # print(value.var(axis=-2))
+    result = compare_test(env, args_list, 5)
+    for (key, value) in result.items():
+        print(value[:, 0])
+        print(value[:, 1])
+        meanv = value.mean(axis=-2)
+        print(meanv)
+        print("avg_time_per_item", meanv[-1]/meanv[1])
+        # print(value.var(axis=-2))
 
 
 
