@@ -9,6 +9,8 @@ class nnModel(object):
     def __init__(self,url,args):
         self.args = get_args()
         
+        self.factor = args.normFactor
+        
         if self.args.no_cuda:
             self.device = torch.device('cpu')
         else:
@@ -29,5 +31,5 @@ class nnModel(object):
                                                                  self.args.internal_node_holder,
                                                                  self.args.leaf_node_holder)
         with torch.no_grad():
-            selectedlogProb, selectedIdx, policy_dist_entropy, value = self.PCT_policy(all_nodes, True, normFactor = 1)
+            selectedlogProb, selectedIdx, policy_dist_entropy, value = self.PCT_policy(all_nodes, True, normFactor = self.factor)
         return value,selectedlogProb,selectedIdx[0][0],leaf_nodes[0]

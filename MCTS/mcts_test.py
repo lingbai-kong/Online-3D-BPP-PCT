@@ -21,7 +21,6 @@ def test(box_size_list, env, obser, simulation_times, search_depth, rollout_leng
     mctree = MCTree(sim_env, obser, box_size_list, search_depth=search_depth, rollout_length=rollout_length)
     while True:
         # show some information
-        print(box_size_list[:10])
         # print(sim_env.space.plain)
         # MCTS simulation
         pl = mctree.get_policy(simulation_times, zeta=1e-5)

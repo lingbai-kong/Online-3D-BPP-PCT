@@ -115,10 +115,10 @@ class PutNode(Node):
         
         # get valid position
         action_mask = sim_env.get_possible_position()
-        action_mask = np.reshape(action_mask, newshape=(-1,))
-
+        # action_mask = np.reshape(action_mask, newshape=(-1,))
+        
         # get possibilities using neural network
-        value, selectedlogProb, selectedIdx,leaf_nodes = nmodel.evaluate(observation, False)
+        value, selectedlogProb, selectedIdx,leaf_nodes = nmodel.evaluate(copy.deepcopy(observation), False)
         
         valid_action_num = 0
         for i in range(len(leaf_nodes)):
@@ -127,8 +127,9 @@ class PutNode(Node):
         
         
         for i in range(len(leaf_nodes)):
+            leaf_node = leaf_nodes[i].cpu().numpy()
             if np.sum(leaf_nodes[i].cpu().numpy())!=0:
-                action = leaf_nodes[i].cpu().numpy()[0:6]
+                action = leaf_node[0:6]
                 if i == selectedIdx:
                     action_possibility = credit + (1-credit) * (1/valid_action_num)
                     self.next_nodes[tuple(action)] = PutNode(self, action_possibility)
@@ -148,7 +149,7 @@ class PutNode(Node):
             self.next_nodes[(0,0,0,0,0,0)] = PutNode(self, 1)
 
         if rollout_length >= 1 and len(box_size_list) >= rollout_length + 1:
-            value = self.roll_out(box_size_list[:rollout_length+1], copy.deepcopy(sim_env), observation)
+            value = self.roll_out(box_size_list[:rollout_length+1], copy.deepcopy(sim_env), copy.deepcopy(observation))
         self.value = value
 
     def roll_out(self, box_size_list, sim_env, observation, gamma=1):
@@ -172,10 +173,10 @@ class PutNode(Node):
             # obs, reward, done, _ = sim3_env.step([action_max])
             
              # get possibilities using neural network
-            value, selectedlogProb, selectedIdx, leaf_nodes = nmodel.evaluate(observation, False)
+            value, selectedlogProb, selectedIdx, leaf_nodes = nmodel.evaluate(obs, False)
             action_sample = leaf_nodes[selectedIdx].cpu().numpy()[0:6]
             #action_sample = np.random.choice(prev.shape[0], p=prev)
-            obs, reward, done, _ = sim3_env.step(action_sample)
+            obs, reward, done, _ = sim3_env.step(action_sample,'roll_out')
 
             if not done and i+1 < box_num:
                 reward_stack.append(reward)

@@ -136,7 +136,7 @@ class PackingDiscrete(gym.Env):
         return leaf_node_vec
 
     # Convert the selected leaf node to the placement of the current item.
-    def LeafNode2Action(self, leaf_node):
+    def LeafNode2Action(self, leaf_node, err_from='unset'):
         if np.sum(leaf_node[0:6]) == 0: return (0, 0, 0), self.next_box
         x = int(leaf_node[3] - leaf_node[0])
         y = int(leaf_node[4] - leaf_node[1])
@@ -145,18 +145,18 @@ class PackingDiscrete(gym.Env):
         if x in z: 
             z.remove(x)
         else: 
-            print('err')
+            print('err from ' + err_from)
         if y in z: 
             z.remove(y)
         else: 
-            print('err')
+            print('err from ' + err_from)
         z = z[0]
         action = (0, int(leaf_node[0]), int(leaf_node[1]))
         next_box = (x, y, int(z))
         return action, next_box
-
-    def step(self, action):
-        if len(action) != 3: action, next_box = self.LeafNode2Action(action)
+    
+    def step(self, action ,err_from):
+        if len(action) != 3: action, next_box = self.LeafNode2Action(action, err_from)
         else: next_box = self.next_box
 
         idx = [action[1], action[2]]

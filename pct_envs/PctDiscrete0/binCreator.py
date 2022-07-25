@@ -46,6 +46,7 @@ class LoadBoxCreator(BoxCreator):
         print("load data set successfully!")
         self.index = 0
         self.box_index = 0
+        print('name:',self.data_name)
         self.traj_nums = len(torch.load(self.data_name))
         self.box_trajs = torch.load(self.data_name)
 
