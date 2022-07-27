@@ -172,7 +172,7 @@ def get_args():
     args = parser.parse_args()
 
     args.evaluate=True
-    args.load_dataset=True
+    args.load_dataset=False
     args.dataset_path='./cut_22.pt'
     
     if args.no_cuda: args.device = 'cpu'

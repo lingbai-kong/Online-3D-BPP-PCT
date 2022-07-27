@@ -136,6 +136,7 @@ class PutNode(Node):
                 else:
                     action_possibility = (1-credit) * (1/valid_action_num)
                     self.next_nodes[tuple(action)] = PutNode(self, action_possibility)
+
 #         valid_action_num = np.sum(action_mask)
         
 #         for i in range(len(action_mask)):
