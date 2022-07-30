@@ -1,6 +1,6 @@
 import torch.nn as nn
 from tools import init
-from numpy import sqrt
+# from numpy import sqrt
 from attention_model import AttentionModel
 
 class DRL_GAT(nn.Module):
@@ -15,10 +15,13 @@ class DRL_GAT(nn.Module):
                                     internal_node_length = args.internal_node_length,
                                     leaf_node_holder = args.leaf_node_holder,
                                     )
-        init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.constant_(x, 0), sqrt(2))
+        init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.constant_(x, 0), 1.414213)
         self.critic = init_(nn.Linear(args.embedding_size, 1))
 
-    def forward(self, items, deterministic = False, normFactor = 1, evaluate = False):
+    def forward(self, items, deterministic = False, normFactor = .1, evaluate = False):
+#         deterministic = False
+#         normFactor = .1
+#         evaluate = False
         o, p, dist_entropy, hidden, _= self.actor(items, deterministic, normFactor = normFactor, evaluate = evaluate)
         values = self.critic(hidden)
         return o, p, dist_entropy,values

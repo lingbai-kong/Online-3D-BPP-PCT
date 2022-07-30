@@ -354,7 +354,8 @@ class Space(object):
         rec = self.plain[lx:lx + x, ly:ly + y]
         max_h = np.max(rec)
         box_now = Box(x, y, z, lx, ly, max_h, density)
-
+        box_action = (x, y, z, lx, ly, max_h)
+        
         if setting != 2:
             combine_contact_points = []
             for tmp in self.boxes:
@@ -385,8 +386,8 @@ class Space(object):
             self.box_vec[self.box_idx] = np.array(
                         [lx, ly, max_h, lx + x, ly + y, max_h + z, density, 0, 1])
             self.box_idx += 1
-            return True
-        return False
+            return True,box_action
+        return False,box_action
 
     # Virtually place an item into the bin,
     # this function is used to check whether the placement is feasible for the current item
@@ -401,7 +402,7 @@ class Space(object):
         max_h = np.max(rec)
 
         box_now = Box(x, y, z, lx, ly, max_h, density, True)
-
+        
         if setting != 2:
             combine_contact_points = []
             for tmp in self.boxes:

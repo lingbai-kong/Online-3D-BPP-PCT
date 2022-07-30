@@ -143,9 +143,11 @@ class AttentionModel(nn.Module):
         else:
             masked_outs = log_p * (1 - mask) + 1e-20
         log_p = torch.div(masked_outs, torch.sum(masked_outs, dim=1).unsqueeze(1))
-
         dist = FixedCategorical(probs=log_p)
+        
         dist_entropy = dist.entropy()
+        
+        # dist_entropy=log_p.sum(axis=1)*3
 
         # Get maximum probabilities and indices
         if deterministic:
@@ -154,7 +156,7 @@ class AttentionModel(nn.Module):
         else:
             # The action at is sampled from the distribution for training
             selected = dist.sample()
-
+        print(selected)
         if not evaluate_action:
             action_log_probs = dist.log_probs(selected)
         else:

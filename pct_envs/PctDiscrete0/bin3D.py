@@ -162,13 +162,13 @@ class PackingDiscrete(gym.Env):
         idx = [action[1], action[2]]
         bin_index = 0
         rotation_flag = action[0]
-        succeeded = self.space.drop_box(next_box, idx, rotation_flag, self.next_den, self.setting)
+        succeeded, box_action = self.space.drop_box(next_box, idx, rotation_flag, self.next_den, self.setting)
 
         if not succeeded:
             reward = 0.0
             done = True
             info = {'counter': len(self.space.boxes), 'ratio': self.space.get_ratio(),
-                    'reward': self.space.get_ratio() * 10}
+                    'reward': self.space.get_ratio() * 10, 'box_action': box_action}
             return self.cur_observation(), reward, done, info
 
         ################################################
@@ -192,5 +192,6 @@ class PackingDiscrete(gym.Env):
         done = False
         info = dict()
         info['counter'] = len(self.space.boxes)
+        info['box_action'] = box_action
         return self.cur_observation(), reward, done, info
 
